@@ -79,7 +79,7 @@
 
             <div class="content">
                 <div class="title m-b-md">
-                    Laravel Notifications
+                    Laravel Notifications Apache 2
                 </div>
 
                 <div class="links">
