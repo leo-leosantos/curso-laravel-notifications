@@ -22,6 +22,7 @@ class PostCommented extends Notification implements ShouldQueue
     public function __construct(Comment $comment)
     {
         $this->comment = $comment ;
+        
     }
 
     /**
@@ -32,7 +33,7 @@ class PostCommented extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        return ['mail'];
+        return ['mail','database'];
     }
 
     /**
@@ -43,6 +44,7 @@ class PostCommented extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
+        
         return (new MailMessage)
                     ->subject("Novo Comentario: , {$this->comment->title}")
                     ->line($this->comment->body)
@@ -56,10 +58,18 @@ class PostCommented extends Notification implements ShouldQueue
      * @param  mixed  $notifiable
      * @return array
      */
-    public function toArray($notifiable)
+    // public function toArray($notifiable)
+    // {
+    //     return [
+    //         //
+    //     ];
+    // }
+
+    public function toDatabase($notifiable)
     {
+        
         return [
-            //
+            'comment' => $this->comment,
         ];
     }
 }
