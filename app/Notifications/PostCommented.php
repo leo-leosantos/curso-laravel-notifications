@@ -69,7 +69,7 @@ class PostCommented extends Notification implements ShouldQueue
     {
         
         return [
-            'comment' => $this->comment,
+            'comment' => $this->comment->load('user'),
         ];
     }
 }
