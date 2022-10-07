@@ -15,11 +15,11 @@ class NotificationController extends Controller
     public function notifications(Request $request)
     {
         
-       $notifications =  $request->user()->comments;
+       $notifications =  $request->user()->notifications;
 
        //dd($notifications);
 
-       $return = response()->json(compact('notifications'));
+       $return = response(compact('notifications'));
 
        return $return;
     }

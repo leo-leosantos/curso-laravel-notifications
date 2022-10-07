@@ -1,7 +1,7 @@
 <template>
     <div>
         <a class="dropdown-item" href="#">
-          {{notification.user_id  }}   {{ notification.title }}
+            {{ comment.user.name }} :  {{ comment.title }} 
         </a>
     </div>
 </template>
@@ -11,11 +11,11 @@
 
 export default {
     props: ['notification'],
-    computed: {
-        comment()
-        {
-            return this.notification.body
+   computed: {
+        comment() {
+            return this.notification.comment
         }
     }
+  
 }
-</script>>
+</script>
