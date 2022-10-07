@@ -6,6 +6,7 @@ use App\Models\Comment;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 
 class PostCommented extends Notification implements ShouldQueue
@@ -21,8 +22,7 @@ class PostCommented extends Notification implements ShouldQueue
 
     public function __construct(Comment $comment)
     {
-        $this->comment = $comment ;
-        
+        $this->comment = $comment;
     }
 
     /**
@@ -33,7 +33,7 @@ class PostCommented extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        return ['mail','database'];
+        return ['mail', 'database', 'broadcast'];
     }
 
     /**
@@ -44,12 +44,12 @@ class PostCommented extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-        
+
         return (new MailMessage)
-                    ->subject("Novo Comentario: , {$this->comment->title}")
-                    ->line($this->comment->body)
-                    ->action('Ver  o comentário', route('posts.show', $this->comment->post_id))
-                    ->line('Abraços');
+            ->subject("Novo Comentario: , {$this->comment->title}")
+            ->line($this->comment->body)
+            ->action('Ver  o comentário', route('posts.show', $this->comment->post_id))
+            ->line('Abraços');
     }
 
     /**
@@ -58,16 +58,21 @@ class PostCommented extends Notification implements ShouldQueue
      * @param  mixed  $notifiable
      * @return array
      */
-    // public function toArray($notifiable)
-    // {
-    //     return [
-    //         //
-    //     ];
-    // }
+    public function toBroadcast($notifiable)
+    {
+        return new BroadcastMessage([
+            'id' => $this->id,
+            'read_at' => null,
+            'data' =>  [
+                'comment' => $this->comment->load('user'),
+            ],
+
+        ]);
+    }
 
     public function toDatabase($notifiable)
     {
-        
+
         return [
             'comment' => $this->comment->load('user'),
         ];
