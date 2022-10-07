@@ -12,11 +12,11 @@
                 <notification 
                     v-for="notification in notifications" 
                     :key="notification.id"
-                    :notification="notification.data"
-                ></notification>
+                    :notification="notification">
+                </notification>
 
 
-                <a class="dropdown-item" href="#">
+                <a class="dropdown-item" href="#" @click.prevent="markAllAsRead">
                     Limpar notificações
                 </a>
             </div>
@@ -26,11 +26,10 @@
 </template>
 
 <script>
-import axios from 'axios';
 
 export default {
 
-    created() {
+    created () {
       //  this.loadNotifications()
       this.$store.dispatch('loadNotifications')
     },
@@ -41,7 +40,11 @@ export default {
         }
     },
 
- 
+    methods: {
+        markAllAsRead (){
+            this.$store.dispatch('markAllAsRead')
+        }
+    }
 
 }
 </script>

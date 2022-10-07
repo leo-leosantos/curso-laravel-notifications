@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+$this->put('notification-read', 'NotificationController@markAsRead');
+$this->put('notification-all-read', 'NotificationController@markAllAsRead');
+
 $this->get('notifications', 'NotificationController@notifications')->name('notifications');
 
 

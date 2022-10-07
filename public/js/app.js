@@ -50166,6 +50166,15 @@ var index_esm = {
     mutations: {
         LOAD_NOTIFICATIONS: function LOAD_NOTIFICATIONS(state, notifications) {
             state.items = notifications;
+        },
+        MARK_AS_READ: function MARK_AS_READ(state, id) {
+            var index = state.items.filter(function (notification) {
+                return notification.id == id;
+            });
+            state.items.splice(index, 1);
+        },
+        MARK_ALL_AS_READ: function MARK_ALL_AS_READ(state) {
+            state.items = [];
         }
     },
 
@@ -50174,6 +50183,19 @@ var index_esm = {
             axios.get('http://localhost:88/laravel-notifications/public/notifications').then(function (response) {
 
                 context.commit('LOAD_NOTIFICATIONS', response.data.notifications);
+            });
+        },
+        markAsRead: function markAsRead(context, params) {
+
+            // axios.put('http://localhost:88/laravel-notifications/public/notification-read', params)
+
+            axios.put('http://localhost:88/laravel-notifications/public/notification-read', params).then(function () {
+                return context.commit('MARK_AS_READ', params.id);
+            });
+        },
+        markAllAsRead: function markAllAsRead(context) {
+            axios.put('http://localhost:88/laravel-notifications/public/notification-all-read').then(function () {
+                return context.commit('MARK_ALL_AS_READ');
             });
         }
     }
@@ -50232,8 +50254,6 @@ module.exports = Component.exports
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
 //
 //
 //
@@ -50261,7 +50281,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -50274,6 +50293,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     computed: {
         notifications: function notifications() {
             return this.$store.state.notifications.items; // this.notificationsItems
+        }
+    },
+
+    methods: {
+        markAllAsRead: function markAllAsRead() {
+            this.$store.dispatch('markAllAsRead');
         }
     }
 
@@ -50322,13 +50347,24 @@ var render = function() {
           _vm._l(_vm.notifications, function(notification) {
             return _c("notification", {
               key: notification.id,
-              attrs: { notification: notification.data }
+              attrs: { notification: notification }
             })
           }),
           _vm._v(" "),
-          _c("a", { staticClass: "dropdown-item", attrs: { href: "#" } }, [
-            _vm._v("\n                Limpar notificações\n            ")
-          ])
+          _c(
+            "a",
+            {
+              staticClass: "dropdown-item",
+              attrs: { href: "#" },
+              on: {
+                click: function($event) {
+                  $event.preventDefault()
+                  return _vm.markAllAsRead.apply(null, arguments)
+                }
+              }
+            },
+            [_vm._v("\n                Limpar notificações\n            ")]
+          )
         ],
         2
       )
@@ -50407,13 +50443,21 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['notification'],
     computed: {
         comment: function comment() {
-            return this.notification.comment;
+            return this.notification.data.comment;
+        }
+    },
+
+    methods: {
+        markAsRead: function markAsRead(idNotification) {
+            this.$store.dispatch('markAsRead', { id: idNotification });
         }
     }
 
@@ -50429,12 +50473,24 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", [
     _c("a", { staticClass: "dropdown-item", attrs: { href: "#" } }, [
+      _c(
+        "span",
+        {
+          on: {
+            click: function($event) {
+              $event.preventDefault()
+              return _vm.markAsRead(_vm.notification.id)
+            }
+          }
+        },
+        [_vm._v("Lida")]
+      ),
       _vm._v(
-        "\n        " +
+        "\n\n        " +
           _vm._s(_vm.comment.user.name) +
-          " :  " +
+          " Comentou: " +
           _vm._s(_vm.comment.title) +
-          " \n    "
+          "\n    "
       )
     ])
   ])
